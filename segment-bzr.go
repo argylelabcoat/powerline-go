@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	pwl "github.com/justjanne/powerline-go/powerline"
 	"os/exec"
 	"strings"
+
+	pwl "github.com/justjanne/powerline-go/powerline"
 )
 
 func getBzrStatus() (bool, bool, bool) {
@@ -30,7 +31,9 @@ func getBzrStatus() (bool, bool, bool) {
 	return hasModifiedFiles, hasUntrackedFiles, hasMissingFiles
 }
 
-func segmentBzr(p *powerline) {
+func segmentBzr(p *powerline) []pwl.Segment {
+	segments := []pwl.Segment{}
+
 	out, _ := exec.Command("bzr", "nick").Output()
 	output := strings.SplitN(string(out), "\n", 2)
 	if len(output) > 0 && output[0] != "" {
@@ -65,10 +68,13 @@ func segmentBzr(p *powerline) {
 			content = fmt.Sprintf(branch)
 		}
 
-		p.appendSegment("bzr", pwl.Segment{
+		segments = append(segments, pwl.Segment{
+			Name:       "bzr",
 			Content:    content,
 			Foreground: foreground,
 			Background: background,
 		})
+
 	}
+	return segments
 }
